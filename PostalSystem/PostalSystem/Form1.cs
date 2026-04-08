@@ -36,30 +36,83 @@ namespace PostalSystem
         {
             try
             {
-                double weight = double.Parse(weightTextBox.Text); 
-                decimal cost = decimal.Parse(costTextBox.Text); 
+                string description = descriptionTextBox.Text;
+                double weight = double.Parse(weightTextBox.Text);
+                decimal cost = decimal.Parse(costTextBox.Text);
                 DateTime date = shipmentDatePicker.Value;
 
-                Parcel newParcel = new Parcel(Guid.NewGuid(), weight, cost, date, null);
+                Parcel newParcel = new Parcel(Guid.NewGuid(), description, weight, cost, date, null);
 
                 FileManager.Add(newParcel);
 
+                DataManager.Add(newParcel);
+
                 ListViewItem item = new ListViewItem(newParcel.Id.ToString());
+
+                item.SubItems.Add(newParcel.Description);
                 item.SubItems.Add(newParcel.Weight.ToString());
                 item.SubItems.Add(newParcel.Cost.ToString());
                 item.SubItems.Add(newParcel.ShipmentDate?.ToString("dd/MM/yyyy"));
 
                 materialListView1.Items.Add(item);
 
+                descriptionTextBox.Clear();
                 weightTextBox.Clear();
                 costTextBox.Clear();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error" + ex.Message);
+                MessageBox.Show("Error: " + ex.Message);
             }
+        }    
+
+        private void materialTextBox21_Click_1(object sender, EventArgs e)
+        {
+
         }
 
+        private void searchButton_Click_1(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!DataManager.Entities.Any())
+                {
+                    return;
+                }
 
+                materialListView1.Items.Clear();
+
+                IEnumerable<IEntity> foundEntities = new List<IEntity>();
+
+                if (string.IsNullOrEmpty(searchTextBox.Text))
+                {
+                    foundEntities = DataManager.Entities;
+                }
+                else
+                {
+                    foundEntities = DataManager.Search(searchTextBox.Text);
+                }
+
+                foreach (IEntity entity in foundEntities)
+                {
+                    var parcelEntity = entity as Parcel;
+
+                    if (parcelEntity != null)
+                    {
+                        ListViewItem item = new ListViewItem(parcelEntity.Id.ToString());
+                        item.SubItems.Add(parcelEntity.Description);
+                        item.SubItems.Add(parcelEntity.Weight.ToString());
+                        item.SubItems.Add(parcelEntity.Cost.ToString());
+                        item.SubItems.Add(parcelEntity.ShipmentDate?.ToString("dd/MM/yyyy") ?? string.Empty);
+
+                        materialListView1.Items.Add(item);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
     }
 }

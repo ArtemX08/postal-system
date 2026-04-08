@@ -10,6 +10,18 @@ namespace PostalSystem
         public List<Parcel> Parcels { get; set; } = new List<Parcel>();
         public List<Client> Clients { get; set; } = new List<Client>();
 
+        public Parcel this[int index]
+        {
+            get
+            {
+                return Parcels[index];
+            }
+            set
+            {
+                Parcels[index] = value;
+            }
+        }
+
         public override string FileName => "PostOffice.txt";
 
         public PostOffice()

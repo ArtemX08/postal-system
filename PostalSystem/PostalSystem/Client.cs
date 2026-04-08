@@ -2,7 +2,7 @@
 
 namespace PostalSystem
 {
-    public sealed class Client : Person
+    public sealed class Client : Person, IEntity
     {
         public string? PaymentMethod { get; set; }
 
@@ -27,6 +27,13 @@ namespace PostalSystem
         public override string Format()
         {
             return $"{base.Format()}[{PaymentMethod}]";
+        }
+
+        public bool Search(string searchString)
+        {
+            return FirstName!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                   LastName!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                   PhoneNumber!.Contains(searchString, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

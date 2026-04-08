@@ -1,41 +1,43 @@
-﻿using System;
-
-namespace PostalSystem
+﻿namespace PostalSystem
 {
-    public sealed class Parcel : Entity
+    public sealed class Parcel : Entity, IEntity
     {
+        public override string FileName => "Parcel.txt";
+
+        public string Description { get; set; }
         public double Weight { get; set; }
         public decimal Cost { get; set; }
         public DateTime? ShipmentDate { get; set; }
         public DateTime? DeliveryDate { get; set; }
 
-        public override string FileName => "Parcel.txt";
-
         public Parcel()
         {
+            Description = "";
             Weight = 0;
             Cost = 0;
             ShipmentDate = DateTime.Now;
             DeliveryDate = null;
         }
 
-        public Parcel(Guid id, double weight, decimal cost, DateTime? shipmentDate, DateTime? deliveryDate)
+        public Parcel(Guid id, string description, double weight, decimal cost, DateTime? shipmentDate, DateTime? deliveryDate)
             : base(id)
         {
+            Description = description;
             Weight = weight;
             Cost = cost;
-            ShipmentDate = shipmentDate;
+            ShipmentDate = shipmentDate ?? DateTime.Now;
             DeliveryDate = deliveryDate;
         }
 
-        public new bool IsValid()
+        public bool Search(string searchString)
         {
-            return base.IsValid() && Weight > 0 && Cost >= 0;
+            return Description!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                   Weight.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase);
         }
 
         public override string Format()
         {
-            return $"{base.Format()}[{Weight}][{Cost}][{ShipmentDate?.ToString("dd/MM/yyyy")}][{DeliveryDate?.ToString("dd/MM/yyyy")}]";
+            return $"{base.Format()}[{Description}][{Weight}][{Cost}][{ShipmentDate?.ToString("dd/MM/yyyy")}]";
         }
     }
 }
