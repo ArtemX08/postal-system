@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-
+﻿using System;
+using System.Collections.Generic;
+using System.Linq; 
 namespace PostalSystem
 {
     public static class DataManager
@@ -11,9 +12,19 @@ namespace PostalSystem
             Entities.Add(entity);
         }
 
-        public static IEnumerable<IEntity> Filter(GenericFilterDelegate<IEntity> filter)
+        public static IEnumerable<IEntity> Search(string searchString)
         {
-            return Entities.Filter(filter);
+            return Entities.Where(it => it.Search(searchString));
+        }
+
+        public static IEnumerable<IEntity> Filter(Func<IEntity, bool> filter)
+        {
+            return Entities.Where(filter);
+        }
+
+        public static IEntity? GetById(Guid id)
+        {
+            return Entities.FirstOrDefault(e => e.Id == id);
         }
     }
 }

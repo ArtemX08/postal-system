@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-
+using System.Linq; 
 namespace PostalSystem
 {
-    public delegate bool GenericFilterDelegate<T>(T item);
-
     public class Repository<T> : IEnumerable<T> where T : IEntity
     {
         private List<T> _items = new List<T>();
@@ -15,15 +13,14 @@ namespace PostalSystem
             _items.Add(item);
         }
 
-        public IEnumerable<T> Filter(GenericFilterDelegate<T> filter)
+        public void Clear()
         {
-            foreach (var item in _items)
-            {
-                if (filter(item))
-                {
-                    yield return item;
-                }
-            }
+            _items.Clear();
+        }
+
+        public IEnumerable<T> Filter(Func<T, bool> filter)
+        {
+            return _items.Where(filter);
         }
 
         public IEnumerator<T> GetEnumerator()

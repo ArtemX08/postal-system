@@ -1,7 +1,10 @@
-﻿namespace PostalSystem
+﻿using System;
+
+namespace PostalSystem
 {
     public interface IEntity
     {
-        public bool Search(string searchString);
+        Guid Id { get; } 
+        bool Search(string searchString);
     }
 }

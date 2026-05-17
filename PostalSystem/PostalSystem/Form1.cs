@@ -9,6 +9,9 @@ namespace PostalSystem
 {
     public partial class Form1 : MaterialForm
     {
+        private const int PAGE_LIMIT = 5; 
+        private int currentPage = 0;      
+
         public Form1()
         {
             InitializeComponent();
@@ -23,12 +26,30 @@ namespace PostalSystem
             );
         }
 
-        private void materialListView1_SelectedIndexChanged(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
+            CalculateStatistics();
         }
 
-        private void materialTextBox21_Click(object sender, EventArgs e)
+        private void materialListView1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (materialListView1.SelectedItems.Count > 0)
+            {
+                string idStr = materialListView1.SelectedItems[0].Text; 
+                if (Guid.TryParse(idStr, out Guid id))
+                {
+                    var detailText = DataManager.Entities
+                        .OfType<Parcel>()
+                        .Where(p => p.Id == id)
+                        .Select(p => $"Description: {p.Description} | Weight: {p.Weight} kg")
+                        .FirstOrDefault();
+
+                    if (detailText != null)
+                    {
+                        selectedItemTextBox.Text = detailText; 
+                    }
+                }
+            }
         }
 
         private void addBtn_Click(object sender, EventArgs e)
@@ -45,13 +66,8 @@ namespace PostalSystem
                 FileManager.Add(newParcel);
                 DataManager.Add(newParcel);
 
-                ListViewItem item = new ListViewItem(newParcel.Id.ToString());
-                item.SubItems.Add(newParcel.Description);
-                item.SubItems.Add(newParcel.Weight.ToString());
-                item.SubItems.Add(newParcel.Cost.ToString());
-                item.SubItems.Add(newParcel.ShipmentDate?.ToString("dd/MM/yyyy"));
-
-                materialListView1.Items.Add(item);
+                searchButton_Click_1(sender, e);
+                CalculateStatistics();
 
                 descriptionTextBox.Clear();
                 weightTextBox.Clear();
@@ -63,10 +79,7 @@ namespace PostalSystem
             }
         }
 
-        private void materialTextBox21_Click_1(object sender, EventArgs e)
-        {
-        }
-
+       
         private void searchButton_Click_1(object sender, EventArgs e)
         {
             try
@@ -74,32 +87,43 @@ namespace PostalSystem
                 if (!DataManager.Entities.Any()) return;
 
                 materialListView1.Items.Clear();
-                IEnumerable<IEntity> foundEntities;
+
+                var parcels = DataManager.Entities.OfType<Parcel>();
+
                 string searchText = searchTextBox.Text;
-
-                if (string.IsNullOrEmpty(searchText))
+                if (!string.IsNullOrEmpty(searchText))
                 {
-                    foundEntities = DataManager.Entities;
-                }
-                else
-                {
-                    foundEntities = DataManager.Filter(entity => entity.Search(searchText));
+                    parcels = parcels.Where(p => p.Search(searchText));
                 }
 
-                foreach (IEntity entity in foundEntities)
+                if (double.TryParse(weightFromTextBox.Text, out double weightFrom) &&
+                    double.TryParse(weightToTextBox.Text, out double weightTo))
                 {
-                    var parcelEntity = entity as Parcel;
-                    if (parcelEntity != null)
-                    {
-                        ListViewItem item = new ListViewItem(parcelEntity.Id.ToString());
-                        item.SubItems.Add(parcelEntity.Description);
-                        item.SubItems.Add(parcelEntity.Weight.ToString());
-                        item.SubItems.Add(parcelEntity.Cost.ToString());
-                        item.SubItems.Add(parcelEntity.ShipmentDate?.ToString("dd/MM/yyyy") ?? string.Empty);
-
-                        materialListView1.Items.Add(item);
-                    }
+                    parcels = parcels.Where(p => p.Weight >= weightFrom && p.Weight <= weightTo);
                 }
+
+               
+                var orderedParcels = parcels
+                    .OrderBy(p => p.Description)
+                    .ThenByDescending(p => p.ShipmentDate);
+
+                var paginatedParcels = orderedParcels
+                    .Skip(currentPage * PAGE_LIMIT)
+                    .Take(PAGE_LIMIT)
+                    .ToList();
+
+                foreach (var parcelEntity in paginatedParcels)
+                {
+                    ListViewItem item = new ListViewItem(parcelEntity.Id.ToString());
+                    item.SubItems.Add(parcelEntity.Description);
+                    item.SubItems.Add(parcelEntity.Weight.ToString());
+                    item.SubItems.Add(parcelEntity.Cost.ToString());
+                    item.SubItems.Add(parcelEntity.ShipmentDate?.ToString("dd/MM/yyyy") ?? string.Empty);
+
+                    materialListView1.Items.Add(item);
+                }
+
+                pageNumTextBox.Text = (currentPage + 1).ToString(); 
             }
             catch (Exception ex)
             {
@@ -107,8 +131,85 @@ namespace PostalSystem
             }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        
+        private void prevBtn_Click_1(object sender, EventArgs e)
         {
+            if (currentPage > 0)
+            {
+                currentPage--;
+                searchButton_Click_1(sender, e);
+            }
         }
+
+        private void nextBtn_Click_1(object sender, EventArgs e)
+        {
+            int totalRecords = DataManager.Entities.OfType<Parcel>().Count();
+            if ((currentPage + 1) * PAGE_LIMIT < totalRecords)
+            {
+                currentPage++;
+                searchButton_Click_1(sender, e);
+            }
+        }
+
+        
+        private void CalculateStatistics()
+        {
+            var parcels = DataManager.Entities.OfType<Parcel>().ToList();
+
+            
+            int totalParcelsCount = parcels.Count();
+            countTextBox.Text = totalParcelsCount.ToString();
+
+            if (parcels.Any())
+            {
+                double maxWeight = parcels.Max(p => p.Weight);
+                maxWeightTextBox.Text = $"{maxWeight} kg";
+            }
+            else
+            {
+                maxWeightTextBox.Text = "0 kg";
+            }
+        }
+
+        
+        private void loadSourceBtn_Click_1(object sender, EventArgs e)
+        {
+            using (OpenFileDialog fileDialog = new OpenFileDialog { Filter = "Text Files (*.txt)|*.txt" })
+            {
+                if (fileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    List<Parcel> anotherParcels = FileManager.GetEntities<Parcel>(fileDialog.FileName);
+
+                    var currentIds = DataManager.Entities.Select(p => p.Id).ToList();
+
+                    var uniqueNewParcels = anotherParcels.ExceptBy(currentIds, p => p.Id);
+
+                    var allParcels = DataManager.Entities.OfType<Parcel>()
+                        .Concat(uniqueNewParcels)
+                        .ToList();
+
+                    DataManager.Entities.Clear();
+                    foreach (var p in allParcels)
+                    {
+                        DataManager.Add(p);
+                    }
+
+                    currentPage = 0;
+                    searchButton_Click_1(sender, e);
+                    CalculateStatistics();
+
+                    MessageBox.Show("Data successfully merged using LINQ set operations!");
+                }
+            }
+        }
+
+        private void weightToTextBox_Click(object sender, EventArgs e) { }
+        private void weightFromTextBox_Click(object sender, EventArgs e) { }
+        private void pageNumTextBox_Click(object sender, EventArgs e) { }
+        private void countTextBox_Click(object sender, EventArgs e) { }
+        private void maxWeightTextBox_Click(object sender, EventArgs e) { }
+        private void selectedItemTextBox_Click(object sender, EventArgs e) { }
+        private void materialTextBox21_Click(object sender, EventArgs e) { }
+        private void materialTextBox21_Click_1(object sender, EventArgs e) { }
     }
 }
