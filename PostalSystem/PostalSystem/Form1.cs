@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq; 
 using System.Windows.Forms;
 using MaterialSkin;
 using MaterialSkin.Controls;
@@ -25,12 +25,10 @@ namespace PostalSystem
 
         private void materialListView1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
         }
 
         private void materialTextBox21_Click(object sender, EventArgs e)
         {
-
         }
 
         private void addBtn_Click(object sender, EventArgs e)
@@ -45,11 +43,9 @@ namespace PostalSystem
                 Parcel newParcel = new Parcel(Guid.NewGuid(), description, weight, cost, date, null);
 
                 FileManager.Add(newParcel);
-
                 DataManager.Add(newParcel);
 
                 ListViewItem item = new ListViewItem(newParcel.Id.ToString());
-
                 item.SubItems.Add(newParcel.Description);
                 item.SubItems.Add(newParcel.Weight.ToString());
                 item.SubItems.Add(newParcel.Cost.ToString());
@@ -69,7 +65,6 @@ namespace PostalSystem
 
         private void materialTextBox21_Click_1(object sender, EventArgs e)
         {
-
         }
 
         private void searchButton_Click_1(object sender, EventArgs e)
@@ -110,6 +105,10 @@ namespace PostalSystem
             {
                 MessageBox.Show("Error: " + ex.Message);
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
         }
     }
 }

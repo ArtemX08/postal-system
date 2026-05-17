@@ -51,14 +51,13 @@
             materialListView1.Columns.AddRange(new ColumnHeader[] { ID, Description, Weight, Cost, Shipment_Date });
             materialListView1.Depth = 0;
             materialListView1.FullRowSelect = true;
-            materialListView1.Location = new Point(9, 112);
-            materialListView1.Margin = new Padding(4, 5, 4, 5);
-            materialListView1.MinimumSize = new Size(286, 167);
+            materialListView1.Location = new Point(6, 67);
+            materialListView1.MinimumSize = new Size(200, 100);
             materialListView1.MouseLocation = new Point(-1, -1);
             materialListView1.MouseState = MaterialSkin.MouseState.OUT;
             materialListView1.Name = "materialListView1";
             materialListView1.OwnerDraw = true;
-            materialListView1.Size = new Size(1126, 237);
+            materialListView1.Size = new Size(788, 142);
             materialListView1.TabIndex = 0;
             materialListView1.UseCompatibleStateImageBehavior = false;
             materialListView1.View = View.Details;
@@ -103,8 +102,7 @@
             weightTextBox.HideSelection = true;
             weightTextBox.Hint = "Enter weight (kg)";
             weightTextBox.LeadingIcon = null;
-            weightTextBox.Location = new Point(9, 395);
-            weightTextBox.Margin = new Padding(4, 5, 4, 5);
+            weightTextBox.Location = new Point(6, 237);
             weightTextBox.MaxLength = 32767;
             weightTextBox.MouseState = MaterialSkin.MouseState.OUT;
             weightTextBox.Name = "weightTextBox";
@@ -116,7 +114,7 @@
             weightTextBox.SelectionLength = 0;
             weightTextBox.SelectionStart = 0;
             weightTextBox.ShortcutsEnabled = true;
-            weightTextBox.Size = new Size(357, 48);
+            weightTextBox.Size = new Size(250, 48);
             weightTextBox.TabIndex = 1;
             weightTextBox.TabStop = false;
             weightTextBox.TextAlign = HorizontalAlignment.Left;
@@ -134,8 +132,7 @@
             costTextBox.HideSelection = true;
             costTextBox.Hint = "Enter cost (UAH)";
             costTextBox.LeadingIcon = null;
-            costTextBox.Location = new Point(9, 485);
-            costTextBox.Margin = new Padding(4, 5, 4, 5);
+            costTextBox.Location = new Point(6, 291);
             costTextBox.MaxLength = 32767;
             costTextBox.MouseState = MaterialSkin.MouseState.OUT;
             costTextBox.Name = "costTextBox";
@@ -147,7 +144,7 @@
             costTextBox.SelectionLength = 0;
             costTextBox.SelectionStart = 0;
             costTextBox.ShortcutsEnabled = true;
-            costTextBox.Size = new Size(357, 48);
+            costTextBox.Size = new Size(250, 48);
             costTextBox.TabIndex = 2;
             costTextBox.TabStop = false;
             costTextBox.TextAlign = HorizontalAlignment.Left;
@@ -159,10 +156,9 @@
             shipmentDatePicker.CustomFormat = "dd/MM/yyyy";
             shipmentDatePicker.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
             shipmentDatePicker.Format = DateTimePickerFormat.Custom;
-            shipmentDatePicker.Location = new Point(436, 395);
-            shipmentDatePicker.Margin = new Padding(4, 5, 4, 5);
+            shipmentDatePicker.Location = new Point(305, 237);
             shipmentDatePicker.Name = "shipmentDatePicker";
-            shipmentDatePicker.Size = new Size(284, 39);
+            shipmentDatePicker.Size = new Size(200, 29);
             shipmentDatePicker.TabIndex = 3;
             // 
             // addBtn
@@ -172,8 +168,8 @@
             addBtn.Depth = 0;
             addBtn.HighEmphasis = true;
             addBtn.Icon = null;
-            addBtn.Location = new Point(516, 578);
-            addBtn.Margin = new Padding(6, 10, 6, 10);
+            addBtn.Location = new Point(361, 347);
+            addBtn.Margin = new Padding(4, 6, 4, 6);
             addBtn.MouseState = MaterialSkin.MouseState.HOVER;
             addBtn.Name = "addBtn";
             addBtn.NoAccentTextColor = Color.Empty;
@@ -187,16 +183,18 @@
             // 
             // searchTextBox
             // 
-            searchTextBox.Location = new Point(834, 395);
+            searchTextBox.Location = new Point(584, 237);
+            searchTextBox.Margin = new Padding(2, 2, 2, 2);
             searchTextBox.Name = "searchTextBox";
-            searchTextBox.Size = new Size(284, 31);
+            searchTextBox.Size = new Size(200, 23);
             searchTextBox.TabIndex = 5;
             // 
             // searchButton
             // 
-            searchButton.Location = new Point(923, 453);
+            searchButton.Location = new Point(646, 272);
+            searchButton.Margin = new Padding(2, 2, 2, 2);
             searchButton.Name = "searchButton";
-            searchButton.Size = new Size(112, 34);
+            searchButton.Size = new Size(78, 20);
             searchButton.TabIndex = 6;
             searchButton.Text = "Search";
             searchButton.UseVisualStyleBackColor = true;
@@ -212,7 +210,8 @@
             descriptionTextBox.HideSelection = true;
             descriptionTextBox.Hint = "Enter Description";
             descriptionTextBox.LeadingIcon = null;
-            descriptionTextBox.Location = new Point(7, 566);
+            descriptionTextBox.Location = new Point(5, 340);
+            descriptionTextBox.Margin = new Padding(2, 2, 2, 2);
             descriptionTextBox.MaxLength = 32767;
             descriptionTextBox.MouseState = MaterialSkin.MouseState.OUT;
             descriptionTextBox.Name = "descriptionTextBox";
@@ -224,7 +223,7 @@
             descriptionTextBox.SelectionLength = 0;
             descriptionTextBox.SelectionStart = 0;
             descriptionTextBox.ShortcutsEnabled = true;
-            descriptionTextBox.Size = new Size(359, 48);
+            descriptionTextBox.Size = new Size(251, 48);
             descriptionTextBox.TabIndex = 7;
             descriptionTextBox.TabStop = false;
             descriptionTextBox.TextAlign = HorizontalAlignment.Left;
@@ -234,9 +233,9 @@
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1143, 667);
+            ClientSize = new Size(800, 400);
             Controls.Add(descriptionTextBox);
             Controls.Add(searchButton);
             Controls.Add(searchTextBox);
@@ -245,10 +244,9 @@
             Controls.Add(costTextBox);
             Controls.Add(weightTextBox);
             Controls.Add(materialListView1);
-            Margin = new Padding(4, 5, 4, 5);
             Name = "Form1";
-            Padding = new Padding(4, 107, 4, 5);
             Text = "Postal System";
+            Load += Form1_Load;
             ResumeLayout(false);
             PerformLayout();
         }
