@@ -1,10 +1,18 @@
-﻿namespace PostalSystem
+﻿using System;
+using System.ComponentModel.DataAnnotations; 
+using System.ComponentModel.DataAnnotations.Schema; 
+
+namespace PostalSystem
 {
     public sealed class Parcel : Entity, IEntity
     {
+        [NotMapped] 
         public override string FileName => "Parcel.txt";
 
+        [Required]
+        [MaxLength(200)]
         public string Description { get; set; }
+
         public double Weight { get; set; }
         public decimal Cost { get; set; }
         public DateTime? ShipmentDate { get; set; }

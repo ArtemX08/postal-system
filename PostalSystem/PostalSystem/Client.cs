@@ -1,11 +1,15 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PostalSystem
 {
     public sealed class Client : Person, IEntity
     {
+        [MaxLength(50)] 
         public string? PaymentMethod { get; set; }
 
+        [NotMapped] 
         public override string FileName => "Client.txt";
 
         public Client()
