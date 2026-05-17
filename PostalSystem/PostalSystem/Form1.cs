@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using MaterialSkin;
 using MaterialSkin.Controls;
@@ -64,7 +65,7 @@ namespace PostalSystem
             {
                 MessageBox.Show("Error: " + ex.Message);
             }
-        }    
+        }
 
         private void materialTextBox21_Click_1(object sender, EventArgs e)
         {
@@ -75,28 +76,24 @@ namespace PostalSystem
         {
             try
             {
-                if (!DataManager.Entities.Any())
-                {
-                    return;
-                }
+                if (!DataManager.Entities.Any()) return;
 
                 materialListView1.Items.Clear();
+                IEnumerable<IEntity> foundEntities;
+                string searchText = searchTextBox.Text;
 
-                IEnumerable<IEntity> foundEntities = new List<IEntity>();
-
-                if (string.IsNullOrEmpty(searchTextBox.Text))
+                if (string.IsNullOrEmpty(searchText))
                 {
                     foundEntities = DataManager.Entities;
                 }
                 else
                 {
-                    foundEntities = DataManager.Search(searchTextBox.Text);
+                    foundEntities = DataManager.Filter(entity => entity.Search(searchText));
                 }
 
                 foreach (IEntity entity in foundEntities)
                 {
                     var parcelEntity = entity as Parcel;
-
                     if (parcelEntity != null)
                     {
                         ListViewItem item = new ListViewItem(parcelEntity.Id.ToString());
