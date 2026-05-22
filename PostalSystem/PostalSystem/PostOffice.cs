@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations; 
+using System.ComponentModel.DataAnnotations.Schema; 
 
 namespace PostalSystem
 {
     public class PostOffice : Entity
     {
+        [Required]
+        [MaxLength(200)]
         public string? Address { get; set; }
 
         public List<Parcel> Parcels { get; set; } = new List<Parcel>();
         public List<Client> Clients { get; set; } = new List<Client>();
 
+        [NotMapped] 
         public Parcel this[int index]
         {
             get
@@ -22,6 +27,7 @@ namespace PostalSystem
             }
         }
 
+        [NotMapped] 
         public override string FileName => "PostOffice.txt";
 
         public PostOffice()
@@ -33,6 +39,9 @@ namespace PostalSystem
         {
             Address = address;
         }
+
+        [MaxLength(50)]
+        public string? CityName { get; set; }
 
         public override string Format()
         {

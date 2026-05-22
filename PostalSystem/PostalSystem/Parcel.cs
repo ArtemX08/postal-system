@@ -6,6 +6,7 @@ namespace PostalSystem
 {
     public sealed class Parcel : Entity, IEntity
     {
+        [NotMapped] 
         public override string FileName => "Parcel.txt";
 
         [Required]
