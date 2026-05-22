@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using MaterialSkin;
 using MaterialSkin.Controls;
+using Microsoft.EntityFrameworkCore;
 
 namespace PostalSystem
 {
@@ -72,8 +73,20 @@ namespace PostalSystem
 
                 using (var db = new ApplicationContext())
                 {
-                    db.Parcels.Add(newParcel);
-                    db.SaveChanges();
+                    using (var transaction = db.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            db.Parcels.Add(newParcel);
+                            db.SaveChanges();
+                            transaction.Commit();
+                        }
+                        catch
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
                 }
 
                 descriptionTextBox.Clear();
@@ -97,7 +110,10 @@ namespace PostalSystem
 
                 using (var db = new ApplicationContext())
                 {
-                    var query = db.Parcels.AsQueryable();
+                    var query = db.Parcels
+                        .AsNoTracking()
+                        .TagWith("App Query: Searching and filtering parcels")
+                        .AsQueryable();
 
                     string searchText = searchTextBox.Text;
                     if (!string.IsNullOrEmpty(searchText))
@@ -215,15 +231,6 @@ namespace PostalSystem
             }
         }
 
-        private void weightToTextBox_Click(object sender, EventArgs e) { }
-        private void weightFromTextBox_Click(object sender, EventArgs e) { }
-        private void pageNumTextBox_Click(object sender, EventArgs e) { }
-        private void countTextBox_Click(object sender, EventArgs e) { }
-        private void maxWeightTextBox_Click(object sender, EventArgs e) { }
-        private void selectedItemTextBox_Click(object sender, EventArgs e) { }
-        private void materialTextBox21_Click(object sender, EventArgs e) { }
-        private void materialTextBox21_Click_1(object sender, EventArgs e) { }
-
         private void updateBtn_Click(object sender, EventArgs e)
         {
             try
@@ -232,18 +239,14 @@ namespace PostalSystem
                 {
                     if (Guid.TryParse(materialListView1.SelectedItems[0].Text, out Guid id))
                     {
+                        string desc = descriptionTextBox.Text;
+                        double weight = double.Parse(weightTextBox.Text);
+                        decimal cost = decimal.Parse(costTextBox.Text);
+                        DateTime date = shipmentDatePicker.Value;
+
                         using (var db = new ApplicationContext())
                         {
-                            var parcel = db.Parcels.FirstOrDefault(p => p.Id == id);
-                            if (parcel != null)
-                            {
-                                parcel.Description = descriptionTextBox.Text;
-                                parcel.Weight = double.Parse(weightTextBox.Text);
-                                parcel.Cost = decimal.Parse(costTextBox.Text);
-                                parcel.ShipmentDate = shipmentDatePicker.Value;
-
-                                db.SaveChanges();
-                            }
+                            db.Database.ExecuteSqlInterpolated($"UPDATE Parcels SET Description = {desc}, Weight = {weight}, Cost = {cost}, ShipmentDate = {date} WHERE Id = {id}");
                         }
 
                         descriptionTextBox.Clear();
@@ -271,12 +274,7 @@ namespace PostalSystem
                     {
                         using (var db = new ApplicationContext())
                         {
-                            var parcel = db.Parcels.FirstOrDefault(p => p.Id == id);
-                            if (parcel != null)
-                            {
-                                db.Parcels.Remove(parcel);
-                                db.SaveChanges();
-                            }
+                            db.Database.ExecuteSqlInterpolated($"DELETE FROM Parcels WHERE Id = {id}");
                         }
 
                         selectedItemTextBox.Text = string.Empty;
@@ -294,5 +292,14 @@ namespace PostalSystem
                 MessageBox.Show("Error: " + ex.Message);
             }
         }
+
+        private void weightToTextBox_Click(object sender, EventArgs e) { }
+        private void weightFromTextBox_Click(object sender, EventArgs e) { }
+        private void pageNumTextBox_Click(object sender, EventArgs e) { }
+        private void countTextBox_Click(object sender, EventArgs e) { }
+        private void maxWeightTextBox_Click(object sender, EventArgs e) { }
+        private void selectedItemTextBox_Click(object sender, EventArgs e) { }
+        private void materialTextBox21_Click(object sender, EventArgs e) { }
+        private void materialTextBox21_Click_1(object sender, EventArgs e) { }
     }
 }
