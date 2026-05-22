@@ -1,15 +1,13 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations; 
-using System.ComponentModel.DataAnnotations.Schema; 
+using System.ComponentModel.DataAnnotations;
 
 namespace PostalSystem
 {
     public class Entity
     {
-        [Key] 
+        [Key]
         public Guid Id { get; set; }
 
-        [NotMapped] 
         public virtual string FileName => "Entity.txt";
 
         public Entity()

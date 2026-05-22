@@ -1,6 +1,6 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations; 
-using System.ComponentModel.DataAnnotations.Schema; 
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PostalSystem
 {
@@ -14,9 +14,14 @@ namespace PostalSystem
         public string Description { get; set; }
 
         public double Weight { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Cost { get; set; }
+
         public DateTime? ShipmentDate { get; set; }
         public DateTime? DeliveryDate { get; set; }
+
+        public string? ReceiverName { get; set; }
 
         public Parcel()
         {
@@ -47,5 +52,7 @@ namespace PostalSystem
         {
             return $"{base.Format()}[{Description}][{Weight}][{Cost}][{ShipmentDate?.ToString("dd/MM/yyyy")}]";
         }
+
+
     }
 }
