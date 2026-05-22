@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 using System.Windows.Forms;
 using MaterialSkin;
 using MaterialSkin.Controls;
@@ -9,8 +9,8 @@ namespace PostalSystem
 {
     public partial class Form1 : MaterialForm
     {
-        private const int PAGE_LIMIT = 5; 
-        private int currentPage = 0;      
+        private const int PAGE_LIMIT = 5;
+        private int currentPage = 0;
 
         public Form1()
         {
@@ -29,24 +29,31 @@ namespace PostalSystem
         private void Form1_Load(object sender, EventArgs e)
         {
             CalculateStatistics();
+            searchButton_Click_1(sender, e);
         }
 
         private void materialListView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (materialListView1.SelectedItems.Count > 0)
             {
-                string idStr = materialListView1.SelectedItems[0].Text; 
+                string idStr = materialListView1.SelectedItems[0].Text;
                 if (Guid.TryParse(idStr, out Guid id))
                 {
-                    var detailText = DataManager.Entities
-                        .OfType<Parcel>()
-                        .Where(p => p.Id == id)
-                        .Select(p => $"Description: {p.Description} | Weight: {p.Weight} kg")
-                        .FirstOrDefault();
-
-                    if (detailText != null)
+                    using (var db = new ApplicationContext())
                     {
-                        selectedItemTextBox.Text = detailText; 
+                        var parcel = db.Parcels.FirstOrDefault(p => p.Id == id);
+                        if (parcel != null)
+                        {
+                            selectedItemTextBox.Text = $"Description: {parcel.Description} | Weight: {parcel.Weight} kg";
+
+                            descriptionTextBox.Text = parcel.Description;
+                            weightTextBox.Text = parcel.Weight.ToString();
+                            costTextBox.Text = parcel.Cost.ToString();
+                            if (parcel.ShipmentDate.HasValue)
+                            {
+                                shipmentDatePicker.Value = parcel.ShipmentDate.Value;
+                            }
+                        }
                     }
                 }
             }
@@ -63,15 +70,18 @@ namespace PostalSystem
 
                 Parcel newParcel = new Parcel(Guid.NewGuid(), description, weight, cost, date, null);
 
-                FileManager.Add(newParcel);
-                DataManager.Add(newParcel);
-
-                searchButton_Click_1(sender, e);
-                CalculateStatistics();
+                using (var db = new ApplicationContext())
+                {
+                    db.Parcels.Add(newParcel);
+                    db.SaveChanges();
+                }
 
                 descriptionTextBox.Clear();
                 weightTextBox.Clear();
                 costTextBox.Clear();
+
+                searchButton_Click_1(sender, e);
+                CalculateStatistics();
             }
             catch (Exception ex)
             {
@@ -79,51 +89,48 @@ namespace PostalSystem
             }
         }
 
-       
         private void searchButton_Click_1(object sender, EventArgs e)
         {
             try
             {
-                if (!DataManager.Entities.Any()) return;
-
                 materialListView1.Items.Clear();
 
-                var parcels = DataManager.Entities.OfType<Parcel>();
-
-                string searchText = searchTextBox.Text;
-                if (!string.IsNullOrEmpty(searchText))
+                using (var db = new ApplicationContext())
                 {
-                    parcels = parcels.Where(p => p.Search(searchText));
+                    var query = db.Parcels.AsQueryable();
+
+                    string searchText = searchTextBox.Text;
+                    if (!string.IsNullOrEmpty(searchText))
+                    {
+                        query = query.Where(p => p.Description.Contains(searchText));
+                    }
+
+                    if (double.TryParse(weightFromTextBox.Text, out double weightFrom) &&
+                        double.TryParse(weightToTextBox.Text, out double weightTo))
+                    {
+                        query = query.Where(p => p.Weight >= weightFrom && p.Weight <= weightTo);
+                    }
+
+                    var orderedParcels = query
+                        .OrderBy(p => p.Description)
+                        .ThenByDescending(p => p.ShipmentDate)
+                        .Skip(currentPage * PAGE_LIMIT)
+                        .Take(PAGE_LIMIT)
+                        .ToList();
+
+                    foreach (var parcelEntity in orderedParcels)
+                    {
+                        ListViewItem item = new ListViewItem(parcelEntity.Id.ToString());
+                        item.SubItems.Add(parcelEntity.Description);
+                        item.SubItems.Add(parcelEntity.Weight.ToString());
+                        item.SubItems.Add(parcelEntity.Cost.ToString());
+                        item.SubItems.Add(parcelEntity.ShipmentDate?.ToString("dd/MM/yyyy") ?? string.Empty);
+
+                        materialListView1.Items.Add(item);
+                    }
+
+                    pageNumTextBox.Text = (currentPage + 1).ToString();
                 }
-
-                if (double.TryParse(weightFromTextBox.Text, out double weightFrom) &&
-                    double.TryParse(weightToTextBox.Text, out double weightTo))
-                {
-                    parcels = parcels.Where(p => p.Weight >= weightFrom && p.Weight <= weightTo);
-                }
-
-               
-                var orderedParcels = parcels
-                    .OrderBy(p => p.Description)
-                    .ThenByDescending(p => p.ShipmentDate);
-
-                var paginatedParcels = orderedParcels
-                    .Skip(currentPage * PAGE_LIMIT)
-                    .Take(PAGE_LIMIT)
-                    .ToList();
-
-                foreach (var parcelEntity in paginatedParcels)
-                {
-                    ListViewItem item = new ListViewItem(parcelEntity.Id.ToString());
-                    item.SubItems.Add(parcelEntity.Description);
-                    item.SubItems.Add(parcelEntity.Weight.ToString());
-                    item.SubItems.Add(parcelEntity.Cost.ToString());
-                    item.SubItems.Add(parcelEntity.ShipmentDate?.ToString("dd/MM/yyyy") ?? string.Empty);
-
-                    materialListView1.Items.Add(item);
-                }
-
-                pageNumTextBox.Text = (currentPage + 1).ToString(); 
             }
             catch (Exception ex)
             {
@@ -131,7 +138,6 @@ namespace PostalSystem
             }
         }
 
-        
         private void prevBtn_Click_1(object sender, EventArgs e)
         {
             if (currentPage > 0)
@@ -143,62 +149,68 @@ namespace PostalSystem
 
         private void nextBtn_Click_1(object sender, EventArgs e)
         {
-            int totalRecords = DataManager.Entities.OfType<Parcel>().Count();
-            if ((currentPage + 1) * PAGE_LIMIT < totalRecords)
+            using (var db = new ApplicationContext())
             {
-                currentPage++;
-                searchButton_Click_1(sender, e);
+                int totalRecords = db.Parcels.Count();
+                if ((currentPage + 1) * PAGE_LIMIT < totalRecords)
+                {
+                    currentPage++;
+                    searchButton_Click_1(sender, e);
+                }
             }
         }
 
-        
         private void CalculateStatistics()
         {
-            var parcels = DataManager.Entities.OfType<Parcel>().ToList();
-
-            
-            int totalParcelsCount = parcels.Count();
-            countTextBox.Text = totalParcelsCount.ToString();
-
-            if (parcels.Any())
+            using (var db = new ApplicationContext())
             {
-                double maxWeight = parcels.Max(p => p.Weight);
-                maxWeightTextBox.Text = $"{maxWeight} kg";
-            }
-            else
-            {
-                maxWeightTextBox.Text = "0 kg";
+                int totalParcelsCount = db.Parcels.Count();
+                countTextBox.Text = totalParcelsCount.ToString();
+
+                if (totalParcelsCount > 0)
+                {
+                    double maxWeight = db.Parcels.Max(p => p.Weight);
+                    maxWeightTextBox.Text = $"{maxWeight} kg";
+                }
+                else
+                {
+                    maxWeightTextBox.Text = "0 kg";
+                }
             }
         }
 
-        
         private void loadSourceBtn_Click_1(object sender, EventArgs e)
         {
             using (OpenFileDialog fileDialog = new OpenFileDialog { Filter = "Text Files (*.txt)|*.txt" })
             {
                 if (fileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    List<Parcel> anotherParcels = FileManager.GetEntities<Parcel>(fileDialog.FileName);
-
-                    var currentIds = DataManager.Entities.Select(p => p.Id).ToList();
-
-                    var uniqueNewParcels = anotherParcels.ExceptBy(currentIds, p => p.Id);
-
-                    var allParcels = DataManager.Entities.OfType<Parcel>()
-                        .Concat(uniqueNewParcels)
-                        .ToList();
-
-                    DataManager.Entities.Clear();
-                    foreach (var p in allParcels)
+                    try
                     {
-                        DataManager.Add(p);
+                        List<Parcel> anotherParcels = FileManager.GetEntities<Parcel>(fileDialog.FileName);
+
+                        using (var db = new ApplicationContext())
+                        {
+                            var currentIds = db.Parcels.Select(p => p.Id).ToList();
+                            var uniqueNewParcels = anotherParcels.Where(p => !currentIds.Contains(p.Id)).ToList();
+
+                            if (uniqueNewParcels.Any())
+                            {
+                                db.Parcels.AddRange(uniqueNewParcels);
+                                db.SaveChanges();
+                            }
+                        }
+
+                        currentPage = 0;
+                        searchButton_Click_1(sender, e);
+                        CalculateStatistics();
+
+                        MessageBox.Show("Data successfully imported to database!");
                     }
-
-                    currentPage = 0;
-                    searchButton_Click_1(sender, e);
-                    CalculateStatistics();
-
-                    MessageBox.Show("Data successfully merged using LINQ set operations!");
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error importing data: " + ex.Message);
+                    }
                 }
             }
         }
@@ -211,5 +223,76 @@ namespace PostalSystem
         private void selectedItemTextBox_Click(object sender, EventArgs e) { }
         private void materialTextBox21_Click(object sender, EventArgs e) { }
         private void materialTextBox21_Click_1(object sender, EventArgs e) { }
+
+        private void updateBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (materialListView1.SelectedItems.Count > 0)
+                {
+                    if (Guid.TryParse(materialListView1.SelectedItems[0].Text, out Guid id))
+                    {
+                        using (var db = new ApplicationContext())
+                        {
+                            var parcel = db.Parcels.FirstOrDefault(p => p.Id == id);
+                            if (parcel != null)
+                            {
+                                parcel.Description = descriptionTextBox.Text;
+                                parcel.Weight = double.Parse(weightTextBox.Text);
+                                parcel.Cost = decimal.Parse(costTextBox.Text);
+                                parcel.ShipmentDate = shipmentDatePicker.Value;
+
+                                db.SaveChanges();
+                            }
+                        }
+
+                        descriptionTextBox.Clear();
+                        weightTextBox.Clear();
+                        costTextBox.Clear();
+
+                        searchButton_Click_1(sender, e);
+                        CalculateStatistics();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private void deleteBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (materialListView1.SelectedItems.Count > 0)
+                {
+                    if (Guid.TryParse(materialListView1.SelectedItems[0].Text, out Guid id))
+                    {
+                        using (var db = new ApplicationContext())
+                        {
+                            var parcel = db.Parcels.FirstOrDefault(p => p.Id == id);
+                            if (parcel != null)
+                            {
+                                db.Parcels.Remove(parcel);
+                                db.SaveChanges();
+                            }
+                        }
+
+                        selectedItemTextBox.Text = string.Empty;
+                        descriptionTextBox.Clear();
+                        weightTextBox.Clear();
+                        costTextBox.Clear();
+
+                        searchButton_Click_1(sender, e);
+                        CalculateStatistics();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
     }
 }

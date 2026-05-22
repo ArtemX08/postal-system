@@ -50,6 +50,8 @@
             maxWeightTextBox = new MaterialSkin.Controls.MaterialTextBox2();
             selectedItemTextBox = new MaterialSkin.Controls.MaterialTextBox2();
             loadSourceBtn = new MaterialSkin.Controls.MaterialButton();
+            updateBtn = new MaterialSkin.Controls.MaterialButton();
+            deleteBtn = new MaterialSkin.Controls.MaterialButton();
             SuspendLayout();
             // 
             // materialListView1
@@ -60,13 +62,14 @@
             materialListView1.Columns.AddRange(new ColumnHeader[] { ID, Description, Weight, Cost, Shipment_Date });
             materialListView1.Depth = 0;
             materialListView1.FullRowSelect = true;
-            materialListView1.Location = new Point(6, 67);
-            materialListView1.MinimumSize = new Size(200, 100);
+            materialListView1.Location = new Point(9, 112);
+            materialListView1.Margin = new Padding(4, 5, 4, 5);
+            materialListView1.MinimumSize = new Size(286, 167);
             materialListView1.MouseLocation = new Point(-1, -1);
             materialListView1.MouseState = MaterialSkin.MouseState.OUT;
             materialListView1.Name = "materialListView1";
             materialListView1.OwnerDraw = true;
-            materialListView1.Size = new Size(788, 142);
+            materialListView1.Size = new Size(1126, 237);
             materialListView1.TabIndex = 0;
             materialListView1.UseCompatibleStateImageBehavior = false;
             materialListView1.View = View.Details;
@@ -111,7 +114,8 @@
             weightTextBox.HideSelection = true;
             weightTextBox.Hint = "Enter weight (kg)";
             weightTextBox.LeadingIcon = null;
-            weightTextBox.Location = new Point(6, 237);
+            weightTextBox.Location = new Point(9, 395);
+            weightTextBox.Margin = new Padding(4, 5, 4, 5);
             weightTextBox.MaxLength = 32767;
             weightTextBox.MouseState = MaterialSkin.MouseState.OUT;
             weightTextBox.Name = "weightTextBox";
@@ -123,7 +127,7 @@
             weightTextBox.SelectionLength = 0;
             weightTextBox.SelectionStart = 0;
             weightTextBox.ShortcutsEnabled = true;
-            weightTextBox.Size = new Size(250, 48);
+            weightTextBox.Size = new Size(357, 48);
             weightTextBox.TabIndex = 1;
             weightTextBox.TabStop = false;
             weightTextBox.TextAlign = HorizontalAlignment.Left;
@@ -141,7 +145,8 @@
             costTextBox.HideSelection = true;
             costTextBox.Hint = "Enter cost (UAH)";
             costTextBox.LeadingIcon = null;
-            costTextBox.Location = new Point(6, 291);
+            costTextBox.Location = new Point(9, 485);
+            costTextBox.Margin = new Padding(4, 5, 4, 5);
             costTextBox.MaxLength = 32767;
             costTextBox.MouseState = MaterialSkin.MouseState.OUT;
             costTextBox.Name = "costTextBox";
@@ -153,7 +158,7 @@
             costTextBox.SelectionLength = 0;
             costTextBox.SelectionStart = 0;
             costTextBox.ShortcutsEnabled = true;
-            costTextBox.Size = new Size(250, 48);
+            costTextBox.Size = new Size(357, 48);
             costTextBox.TabIndex = 2;
             costTextBox.TabStop = false;
             costTextBox.TextAlign = HorizontalAlignment.Left;
@@ -165,9 +170,10 @@
             shipmentDatePicker.CustomFormat = "dd/MM/yyyy";
             shipmentDatePicker.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
             shipmentDatePicker.Format = DateTimePickerFormat.Custom;
-            shipmentDatePicker.Location = new Point(6, 393);
+            shipmentDatePicker.Location = new Point(9, 655);
+            shipmentDatePicker.Margin = new Padding(4, 5, 4, 5);
             shipmentDatePicker.Name = "shipmentDatePicker";
-            shipmentDatePicker.Size = new Size(250, 29);
+            shipmentDatePicker.Size = new Size(355, 39);
             shipmentDatePicker.TabIndex = 3;
             // 
             // addBtn
@@ -177,8 +183,8 @@
             addBtn.Depth = 0;
             addBtn.HighEmphasis = true;
             addBtn.Icon = null;
-            addBtn.Location = new Point(319, 502);
-            addBtn.Margin = new Padding(4, 6, 4, 6);
+            addBtn.Location = new Point(456, 837);
+            addBtn.Margin = new Padding(6, 10, 6, 10);
             addBtn.MouseState = MaterialSkin.MouseState.HOVER;
             addBtn.Name = "addBtn";
             addBtn.NoAccentTextColor = Color.Empty;
@@ -192,18 +198,16 @@
             // 
             // searchTextBox
             // 
-            searchTextBox.Location = new Point(513, 355);
-            searchTextBox.Margin = new Padding(2);
+            searchTextBox.Location = new Point(733, 592);
             searchTextBox.Name = "searchTextBox";
-            searchTextBox.Size = new Size(200, 23);
+            searchTextBox.Size = new Size(284, 31);
             searchTextBox.TabIndex = 5;
             // 
             // searchButton
             // 
-            searchButton.Location = new Point(717, 358);
-            searchButton.Margin = new Padding(2);
+            searchButton.Location = new Point(1024, 597);
             searchButton.Name = "searchButton";
-            searchButton.Size = new Size(78, 20);
+            searchButton.Size = new Size(111, 33);
             searchButton.TabIndex = 6;
             searchButton.Text = "Search";
             searchButton.UseVisualStyleBackColor = true;
@@ -219,8 +223,7 @@
             descriptionTextBox.HideSelection = true;
             descriptionTextBox.Hint = "Enter Description";
             descriptionTextBox.LeadingIcon = null;
-            descriptionTextBox.Location = new Point(5, 340);
-            descriptionTextBox.Margin = new Padding(2);
+            descriptionTextBox.Location = new Point(7, 567);
             descriptionTextBox.MaxLength = 32767;
             descriptionTextBox.MouseState = MaterialSkin.MouseState.OUT;
             descriptionTextBox.Name = "descriptionTextBox";
@@ -232,7 +235,7 @@
             descriptionTextBox.SelectionLength = 0;
             descriptionTextBox.SelectionStart = 0;
             descriptionTextBox.ShortcutsEnabled = true;
-            descriptionTextBox.Size = new Size(251, 48);
+            descriptionTextBox.Size = new Size(359, 48);
             descriptionTextBox.TabIndex = 7;
             descriptionTextBox.TabStop = false;
             descriptionTextBox.TextAlign = HorizontalAlignment.Left;
@@ -250,7 +253,8 @@
             weightFromTextBox.HideSelection = true;
             weightFromTextBox.Hint = "Weight From:";
             weightFromTextBox.LeadingIcon = null;
-            weightFromTextBox.Location = new Point(513, 383);
+            weightFromTextBox.Location = new Point(733, 638);
+            weightFromTextBox.Margin = new Padding(4, 5, 4, 5);
             weightFromTextBox.MaxLength = 32767;
             weightFromTextBox.MouseState = MaterialSkin.MouseState.OUT;
             weightFromTextBox.Name = "weightFromTextBox";
@@ -262,7 +266,7 @@
             weightFromTextBox.SelectionLength = 0;
             weightFromTextBox.SelectionStart = 0;
             weightFromTextBox.ShortcutsEnabled = true;
-            weightFromTextBox.Size = new Size(280, 48);
+            weightFromTextBox.Size = new Size(400, 48);
             weightFromTextBox.TabIndex = 8;
             weightFromTextBox.TabStop = false;
             weightFromTextBox.TextAlign = HorizontalAlignment.Left;
@@ -280,7 +284,8 @@
             weightToTextBox.HideSelection = true;
             weightToTextBox.Hint = "Weight To:";
             weightToTextBox.LeadingIcon = null;
-            weightToTextBox.Location = new Point(513, 436);
+            weightToTextBox.Location = new Point(733, 727);
+            weightToTextBox.Margin = new Padding(4, 5, 4, 5);
             weightToTextBox.MaxLength = 32767;
             weightToTextBox.MouseState = MaterialSkin.MouseState.OUT;
             weightToTextBox.Name = "weightToTextBox";
@@ -292,7 +297,7 @@
             weightToTextBox.SelectionLength = 0;
             weightToTextBox.SelectionStart = 0;
             weightToTextBox.ShortcutsEnabled = true;
-            weightToTextBox.Size = new Size(280, 48);
+            weightToTextBox.Size = new Size(400, 48);
             weightToTextBox.TabIndex = 9;
             weightToTextBox.TabStop = false;
             weightToTextBox.TextAlign = HorizontalAlignment.Left;
@@ -307,8 +312,8 @@
             prevBtn.Depth = 0;
             prevBtn.HighEmphasis = true;
             prevBtn.Icon = null;
-            prevBtn.Location = new Point(544, 502);
-            prevBtn.Margin = new Padding(4, 6, 4, 6);
+            prevBtn.Location = new Point(777, 837);
+            prevBtn.Margin = new Padding(6, 10, 6, 10);
             prevBtn.MouseState = MaterialSkin.MouseState.HOVER;
             prevBtn.Name = "prevBtn";
             prevBtn.NoAccentTextColor = Color.Empty;
@@ -327,8 +332,8 @@
             nextBtn.Depth = 0;
             nextBtn.HighEmphasis = true;
             nextBtn.Icon = null;
-            nextBtn.Location = new Point(669, 502);
-            nextBtn.Margin = new Padding(4, 6, 4, 6);
+            nextBtn.Location = new Point(956, 837);
+            nextBtn.Margin = new Padding(6, 10, 6, 10);
             nextBtn.MouseState = MaterialSkin.MouseState.HOVER;
             nextBtn.Name = "nextBtn";
             nextBtn.NoAccentTextColor = Color.Empty;
@@ -349,7 +354,8 @@
             pageNumTextBox.Font = new Font("Microsoft Sans Serif", 16F, FontStyle.Regular, GraphicsUnit.Pixel);
             pageNumTextBox.HideSelection = true;
             pageNumTextBox.LeadingIcon = null;
-            pageNumTextBox.Location = new Point(615, 490);
+            pageNumTextBox.Location = new Point(867, 825);
+            pageNumTextBox.Margin = new Padding(4, 5, 4, 5);
             pageNumTextBox.MaxLength = 32767;
             pageNumTextBox.MouseState = MaterialSkin.MouseState.OUT;
             pageNumTextBox.Name = "pageNumTextBox";
@@ -361,7 +367,7 @@
             pageNumTextBox.SelectionLength = 0;
             pageNumTextBox.SelectionStart = 0;
             pageNumTextBox.ShortcutsEnabled = true;
-            pageNumTextBox.Size = new Size(47, 48);
+            pageNumTextBox.Size = new Size(67, 48);
             pageNumTextBox.TabIndex = 12;
             pageNumTextBox.TabStop = false;
             pageNumTextBox.TextAlign = HorizontalAlignment.Left;
@@ -379,7 +385,8 @@
             countTextBox.HideSelection = true;
             countTextBox.Hint = "Future Parcels Count:";
             countTextBox.LeadingIcon = null;
-            countTextBox.Location = new Point(262, 291);
+            countTextBox.Location = new Point(585, 485);
+            countTextBox.Margin = new Padding(4, 5, 4, 5);
             countTextBox.MaxLength = 32767;
             countTextBox.MouseState = MaterialSkin.MouseState.OUT;
             countTextBox.Name = "countTextBox";
@@ -391,7 +398,7 @@
             countTextBox.SelectionLength = 0;
             countTextBox.SelectionStart = 0;
             countTextBox.ShortcutsEnabled = true;
-            countTextBox.Size = new Size(250, 48);
+            countTextBox.Size = new Size(126, 48);
             countTextBox.TabIndex = 13;
             countTextBox.TabStop = false;
             countTextBox.TextAlign = HorizontalAlignment.Left;
@@ -409,7 +416,8 @@
             maxWeightTextBox.HideSelection = true;
             maxWeightTextBox.Hint = "Max Weight:";
             maxWeightTextBox.LeadingIcon = null;
-            maxWeightTextBox.Location = new Point(530, 291);
+            maxWeightTextBox.Location = new Point(757, 485);
+            maxWeightTextBox.Margin = new Padding(4, 5, 4, 5);
             maxWeightTextBox.MaxLength = 32767;
             maxWeightTextBox.MouseState = MaterialSkin.MouseState.OUT;
             maxWeightTextBox.Name = "maxWeightTextBox";
@@ -421,7 +429,7 @@
             maxWeightTextBox.SelectionLength = 0;
             maxWeightTextBox.SelectionStart = 0;
             maxWeightTextBox.ShortcutsEnabled = true;
-            maxWeightTextBox.Size = new Size(250, 48);
+            maxWeightTextBox.Size = new Size(357, 48);
             maxWeightTextBox.TabIndex = 14;
             maxWeightTextBox.TabStop = false;
             maxWeightTextBox.TextAlign = HorizontalAlignment.Left;
@@ -438,7 +446,8 @@
             selectedItemTextBox.Font = new Font("Microsoft Sans Serif", 16F, FontStyle.Regular, GraphicsUnit.Pixel);
             selectedItemTextBox.HideSelection = true;
             selectedItemTextBox.LeadingIcon = null;
-            selectedItemTextBox.Location = new Point(261, 237);
+            selectedItemTextBox.Location = new Point(373, 395);
+            selectedItemTextBox.Margin = new Padding(4, 5, 4, 5);
             selectedItemTextBox.MaxLength = 32767;
             selectedItemTextBox.MouseState = MaterialSkin.MouseState.OUT;
             selectedItemTextBox.Name = "selectedItemTextBox";
@@ -450,7 +459,7 @@
             selectedItemTextBox.SelectionLength = 0;
             selectedItemTextBox.SelectionStart = 0;
             selectedItemTextBox.ShortcutsEnabled = true;
-            selectedItemTextBox.Size = new Size(532, 48);
+            selectedItemTextBox.Size = new Size(760, 48);
             selectedItemTextBox.TabIndex = 15;
             selectedItemTextBox.TabStop = false;
             selectedItemTextBox.TextAlign = HorizontalAlignment.Left;
@@ -465,8 +474,8 @@
             loadSourceBtn.Depth = 0;
             loadSourceBtn.HighEmphasis = true;
             loadSourceBtn.Icon = null;
-            loadSourceBtn.Location = new Point(16, 502);
-            loadSourceBtn.Margin = new Padding(4, 6, 4, 6);
+            loadSourceBtn.Location = new Point(23, 837);
+            loadSourceBtn.Margin = new Padding(6, 10, 6, 10);
             loadSourceBtn.MouseState = MaterialSkin.MouseState.HOVER;
             loadSourceBtn.Name = "loadSourceBtn";
             loadSourceBtn.NoAccentTextColor = Color.Empty;
@@ -478,11 +487,53 @@
             loadSourceBtn.UseVisualStyleBackColor = true;
             loadSourceBtn.Click += loadSourceBtn_Click_1;
             // 
+            // updateBtn
+            // 
+            updateBtn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            updateBtn.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            updateBtn.Depth = 0;
+            updateBtn.HighEmphasis = true;
+            updateBtn.Icon = null;
+            updateBtn.Location = new Point(387, 485);
+            updateBtn.Margin = new Padding(4, 6, 4, 6);
+            updateBtn.MouseState = MaterialSkin.MouseState.HOVER;
+            updateBtn.Name = "updateBtn";
+            updateBtn.NoAccentTextColor = Color.Empty;
+            updateBtn.Size = new Size(77, 36);
+            updateBtn.TabIndex = 17;
+            updateBtn.Text = "Update";
+            updateBtn.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            updateBtn.UseAccentColor = false;
+            updateBtn.UseVisualStyleBackColor = true;
+            updateBtn.Click += updateBtn_Click;
+            // 
+            // deleteBtn
+            // 
+            deleteBtn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            deleteBtn.Density = MaterialSkin.Controls.MaterialButton.MaterialButtonDensity.Default;
+            deleteBtn.Depth = 0;
+            deleteBtn.HighEmphasis = true;
+            deleteBtn.Icon = null;
+            deleteBtn.Location = new Point(491, 485);
+            deleteBtn.Margin = new Padding(4, 6, 4, 6);
+            deleteBtn.MouseState = MaterialSkin.MouseState.HOVER;
+            deleteBtn.Name = "deleteBtn";
+            deleteBtn.NoAccentTextColor = Color.Empty;
+            deleteBtn.Size = new Size(73, 36);
+            deleteBtn.TabIndex = 18;
+            deleteBtn.Text = "Delete";
+            deleteBtn.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
+            deleteBtn.UseAccentColor = false;
+            deleteBtn.UseVisualStyleBackColor = true;
+            deleteBtn.Click += deleteBtn_Click;
+            // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 547);
+            ClientSize = new Size(1143, 912);
+            Controls.Add(deleteBtn);
+            Controls.Add(updateBtn);
             Controls.Add(loadSourceBtn);
             Controls.Add(selectedItemTextBox);
             Controls.Add(maxWeightTextBox);
@@ -500,7 +551,9 @@
             Controls.Add(costTextBox);
             Controls.Add(weightTextBox);
             Controls.Add(materialListView1);
+            Margin = new Padding(4, 5, 4, 5);
             Name = "Form1";
+            Padding = new Padding(4, 107, 4, 5);
             Text = "Postal System";
             Load += Form1_Load;
             ResumeLayout(false);
@@ -531,5 +584,7 @@
         private MaterialSkin.Controls.MaterialTextBox2 maxWeightTextBox;
         private MaterialSkin.Controls.MaterialTextBox2 selectedItemTextBox;
         private MaterialSkin.Controls.MaterialButton loadSourceBtn;
+        private MaterialSkin.Controls.MaterialButton updateBtn;
+        private MaterialSkin.Controls.MaterialButton deleteBtn;
     }
 }

@@ -1,10 +1,13 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace PostalSystem
 {
     public class Entity
     {
+        [Key]
         public Guid Id { get; set; }
+
         public virtual string FileName => "Entity.txt";
 
         public Entity()

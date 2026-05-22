@@ -1,14 +1,26 @@
-﻿namespace PostalSystem
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace PostalSystem
 {
     public sealed class Parcel : Entity, IEntity
     {
         public override string FileName => "Parcel.txt";
 
+        [Required]
+        [MaxLength(200)]
         public string Description { get; set; }
+
         public double Weight { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Cost { get; set; }
+
         public DateTime? ShipmentDate { get; set; }
         public DateTime? DeliveryDate { get; set; }
+
+        public string? ReceiverName { get; set; }
 
         public Parcel()
         {
@@ -39,5 +51,7 @@
         {
             return $"{base.Format()}[{Description}][{Weight}][{Cost}][{ShipmentDate?.ToString("dd/MM/yyyy")}]";
         }
+
+
     }
 }
